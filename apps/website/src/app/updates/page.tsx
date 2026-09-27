@@ -51,6 +51,7 @@ export default function UpdatesPage() {
                   width={680}
                   height={442}
                   className="mb-12"
+                  unoptimized
                 />
               )}
 

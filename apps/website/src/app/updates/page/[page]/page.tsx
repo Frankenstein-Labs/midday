@@ -81,6 +81,7 @@ export default async function UpdatesPagePaginated({ params }: Props) {
                   width={680}
                   height={442}
                   className="mb-12"
+                  unoptimized
                 />
               )}
 

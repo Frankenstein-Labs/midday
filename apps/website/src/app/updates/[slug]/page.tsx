@@ -109,10 +109,11 @@ export default async function Page({ params }: Props) {
             <Image
               src={post.metadata.image}
               alt={post.metadata.title}
-              width={680}
-              height={442}
-              className="mb-12"
-            />
+                width={680}
+                height={442}
+                className="mb-12"
+                unoptimized
+              />
           )}
           <CustomMDX source={post.content} />
         </div>
