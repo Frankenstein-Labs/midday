@@ -17,11 +17,11 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ waitlist?: string }>;
+  searchParams: Promise<{ waitlist?: string; error?: string }>;
 };
 
 export default async function Page({ searchParams }: Props) {
-  const { waitlist: waitlistParam } = await searchParams;
+  const { waitlist: waitlistParam, error: errorParam } = await searchParams;
   const cookieStore = await cookies();
   const preferred = cookieStore.get(Cookies.PreferredSignInProvider);
   const { device } = userAgent({ headers: await headers() });
@@ -187,6 +187,15 @@ export default async function Page({ searchParams }: Props) {
                   <p className="font-sans text-sm text-[#878787]">
                     Sign in or create an account
                   </p>
+                  {errorParam && (
+                    <p
+                      role="alert"
+                      className="pt-2 font-sans text-sm text-red-500"
+                    >
+                      We couldn&apos;t complete sign-in. Please try again or
+                      choose another provider.
+                    </p>
+                  )}
                 </div>
 
                 {/* Sign In Options */}

@@ -55,6 +55,8 @@ export function useOAuthSignIn(provider: OAuthProvider) {
   const config = OAUTH_PROVIDERS[provider];
 
   const handleSignIn = async () => {
+    if (isLoading) return;
+
     setLoading(true);
 
     const redirectTo = new URL("/api/auth/callback", getUrl());
@@ -72,18 +74,24 @@ export function useOAuthSignIn(provider: OAuthProvider) {
       ? { ...config.queryParams, client: "desktop" }
       : config.queryParams;
 
-    await supabase.auth.signInWithOAuth({
-      provider: provider as Provider,
-      options: {
-        redirectTo: redirectTo.toString(),
-        scopes: config.scopes,
-        queryParams,
-      },
-    });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider as Provider,
+        options: {
+          redirectTo: redirectTo.toString(),
+          scopes: config.scopes,
+          queryParams,
+        },
+      });
 
-    setTimeout(() => {
+      if (error) {
+        console.error(`Unable to start ${config.name} sign-in`, error);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(`Unable to start ${config.name} sign-in`, error);
       setLoading(false);
-    }, 2000);
+    }
   };
 
   return { handleSignIn, isLoading, config };

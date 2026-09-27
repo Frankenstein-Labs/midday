@@ -22,7 +22,11 @@ export async function GET(req: NextRequest) {
   const provider = requestUrl.searchParams.get("provider");
 
   if (client === "desktop") {
-    return NextResponse.redirect(`${origin}/verify?code=${code}`);
+    return code
+      ? NextResponse.redirect(
+          `${origin}/verify?code=${encodeURIComponent(code)}`,
+        )
+      : NextResponse.redirect(`${origin}/login?error=missing_oauth_code`);
   }
 
   if (provider) {
@@ -33,7 +37,18 @@ export async function GET(req: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error: exchangeError } =
+      await supabase.auth.exchangeCodeForSession(code);
+
+    if (exchangeError) {
+      console.error("Unable to exchange OAuth code for a session", {
+        provider,
+        message: exchangeError.message,
+      });
+      return NextResponse.redirect(
+        `${origin}/login?error=oauth_callback_failed`,
+      );
+    }
 
     const {
       data: { session },
