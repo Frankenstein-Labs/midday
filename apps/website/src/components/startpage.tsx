@@ -48,6 +48,9 @@ const TestimonialsSection = dynamic(
 const IntegrationsSection = dynamic(() =>
   import("./sections/integrations-section").then((m) => m.IntegrationsSection),
 );
+const FounderSection = dynamic(() =>
+  import("./sections/founder-section").then((m) => m.FounderSection),
+);
 
 // Static features data - moved outside component to avoid recreation on each render
 const features = [
@@ -919,6 +922,14 @@ export function StartPage() {
 
       {/* Integrations Section */}
       <IntegrationsSection />
+
+      {/* Divider */}
+      <div className="max-w-[1400px] mx-auto">
+        <div className="h-px w-full border-t border-border" />
+      </div>
+
+      {/* Founder Section */}
+      <FounderSection />
     </div>
   );
 }
