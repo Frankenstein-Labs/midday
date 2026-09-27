@@ -23,6 +23,9 @@ export function FounderSection() {
               height={460}
               sizes="(max-width: 640px) 100vw, 280px"
               className="h-full w-full object-cover"
+              // This is a local asset on the Render deployment. Bypass the
+              // production CDN loader, whose canonical host does not contain it.
+              unoptimized
               priority={false}
             />
           </div>
