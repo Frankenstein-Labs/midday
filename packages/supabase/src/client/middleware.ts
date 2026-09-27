@@ -26,16 +26,12 @@ export async function updateSession(
     },
   );
 
-  // Do not run code between createServerClient and getClaims().
-  // A simple mistake could make it very hard to debug issues with
-  // users being randomly logged out.
-  //
-  // getClaims() validates the JWT signature against the project's
-  // published JWKS and refreshes expired tokens. Never trust
-  // getSession() inside server code — it isn't guaranteed to
-  // revalidate the Auth token.
-  const { data, error } = await supabase.auth.getClaims();
-  const isAuthenticated = !!data && !error;
+  // Revalidate JWT and refresh session cookies via getUser()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  const isAuthenticated = !!user && !error;
 
   return {
     response,
