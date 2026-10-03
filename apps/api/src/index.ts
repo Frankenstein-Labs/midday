@@ -140,6 +140,19 @@ app.get("/health", (c) => {
   return c.json({ status: "ok" }, 200);
 });
 
+// Vercel Services keeps the original /api prefix when routing public traffic
+// to this service. Keep the unprefixed routes above for internal bindings and
+// expose the same health endpoints under /api for the shared public domain.
+app.get("/api/health", (c) => {
+  const start = performance.now();
+  c.header(
+    "Server-Timing",
+    `app;dur=${(performance.now() - start).toFixed(2)}`,
+  );
+  c.header("X-Server-Timestamp", Date.now().toString());
+  return c.json({ status: "ok" }, 200);
+});
+
 app.get("/health/ready", async (c) => {
   const results = await checkDependencies(apiDependencies(), 1);
   const response = buildReadinessResponse(results);
@@ -147,6 +160,18 @@ app.get("/health/ready", async (c) => {
 });
 
 app.get("/health/dependencies", async (c) => {
+  const results = await checkDependencies(apiDependencies());
+  const response = buildDependenciesResponse(results);
+  return c.json(response, response.status === "ok" ? 200 : 503);
+});
+
+app.get("/api/health/ready", async (c) => {
+  const results = await checkDependencies(apiDependencies(), 1);
+  const response = buildReadinessResponse(results);
+  return c.json(response, response.status === "ok" ? 200 : 503);
+});
+
+app.get("/api/health/dependencies", async (c) => {
   const results = await checkDependencies(apiDependencies());
   const response = buildDependenciesResponse(results);
   return c.json(response, response.status === "ok" ? 200 : 503);
@@ -330,6 +355,10 @@ app.get(
 );
 
 app.route("/", routers);
+// Public requests routed from the shared Vercel domain retain /api. Mounting
+// the same router below keeps browser and webhook URLs stable without changing
+// the internal service binding contract.
+app.route("/api", routers);
 
 const poolStatsIntervalMsRaw = process.env.DB_POOL_STATS_INTERVAL_MS;
 const parsedPoolStatsIntervalMs = Number.parseInt(
