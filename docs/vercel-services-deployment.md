@@ -11,7 +11,7 @@ Cette configuration déploie Midday dans **un seul projet Vercel** avec une URL 
 
 Le fichier [`/vercel.json`](../vercel.json) est placé à la racine du monorepo. Le projet Vercel doit donc utiliser la racine du dépôt comme **Root Directory** et le framework `Services`.
 
-Les Dockerfiles existants sont utilisés explicitement par `entrypoint`. Ils conservent le contexte complet du monorepo nécessaire à `turbo prune` et aux dépendances `workspace:*`.
+Les deux services utilisent `root: "."` et des `entrypoint` Dockerfiles sous `apps/`. C’est volontaire : les Dockerfiles exécutent `turbo prune` et ont besoin du `package.json`, du lockfile et des packages workspace à la racine du monorepo. Un `root` réglé sur `apps/api` ou `apps/dashboard` transforme le contexte Docker en sous-répertoire et provoque l’erreur `Missing devEngines.packageManager or legacy packageManager`.
 
 ## Routage
 
