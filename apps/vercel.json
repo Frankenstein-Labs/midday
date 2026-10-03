@@ -1,0 +1,59 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "api": {
+      "root": "api",
+      "runtime": "container"
+    },
+    "dashboard": {
+      "root": "dashboard",
+      "framework": "nextjs",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "api",
+          "format": "url",
+          "env": "API_URL"
+        }
+      ]
+    },
+    "desktop": {
+      "root": "desktop",
+      "framework": "vite"
+    },
+    "src-tauri": {
+      "root": "desktop/src-tauri",
+      "runtime": "rust"
+    },
+    "website": {
+      "root": "website",
+      "framework": "nextjs"
+    },
+    "worker": {
+      "root": "worker",
+      "framework": "hono",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "api",
+          "format": "url",
+          "env": "API_URL"
+        }
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "api"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "dashboard"
+      }
+    }
+  ]
+}
