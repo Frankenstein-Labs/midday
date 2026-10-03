@@ -20,10 +20,12 @@ import {
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
 
-// Server-side: prefer Railway private networking (skips DNS + TLS + Cloudflare)
+// Server-side: prefer bound service URL / Railway private networking (skips DNS + TLS + Cloudflare)
 // Falls back to public URL for local dev / non-Railway environments
 const API_BASE_URL =
-  process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL;
+  process.env.API_URL ||
+  process.env.API_INTERNAL_URL ||
+  process.env.NEXT_PUBLIC_API_URL;
 
 const SSR_FETCH_TIMEOUT_MS = 8_000;
 
