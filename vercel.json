@@ -1,37 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "api": {
-      "root": "./",
-      "runtime": "container",
-      "entrypoint": "apps/api/Dockerfile"
-    },
-    "dashboard": {
-      "root": "./",
-      "runtime": "container",
-      "entrypoint": "apps/dashboard/Dockerfile",
-      "bindings": [
-        {
-          "type": "service",
-          "service": "api",
-          "format": "url",
-          "env": "API_URL"
-        }
-      ]
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "api"
-      }
-    },
-    {
-      "source": "/(.*)",
-      "destination": {
-        "service": "dashboard"
-      }
-    }
-  ]
+  "framework": "nextjs",
+  "installCommand": "bun install",
+  "buildCommand": "bunx turbo run build --filter=@midday/dashboard --only",
+  "outputDirectory": "apps/dashboard/.next"
 }
