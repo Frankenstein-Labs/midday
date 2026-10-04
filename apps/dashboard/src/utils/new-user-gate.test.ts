@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from "bun:test";
+import { afterEach, describe, expect, it } from "bun:test";
 import { isBlockedNewUser, NEW_USER_CUTOFF } from "./new-user-gate";
 
 describe("isBlockedNewUser", () => {
